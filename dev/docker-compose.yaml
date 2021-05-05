@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:11.6
+    container_name: payment-system-postgres
+    ports:
+      - 9000:5432
+    environment:
+      - POSTGRES_USER=payment-system-user
+      - POSTGRES_DB=payment-system
+      - POSTGRES_HOST_AUTH_METHOD=trust

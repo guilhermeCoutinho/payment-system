@@ -1,0 +1,16 @@
+metadata:
+  appName: "payment-system"
+  version: "v0.0.1"
+
+http:
+  address: localhost:8080
+
+db:
+  user: payment-system-user
+  pass: ""
+  host: localhost
+  database: payment-system
+  port: 9000
+  poolSize: 20
+  maxRetries: 3
+  connectionTimeout: 1
