@@ -6,7 +6,7 @@ import (
 )
 
 type DAL struct {
-	Meal AccountDAL
+	Account AccountDAL
 }
 
 func NewDAL(
@@ -14,6 +14,6 @@ func NewDAL(
 	db *pg.DB,
 ) *DAL {
 	return &DAL{
-		Meal: NewAccount(config, db),
+		Account: NewAccount(config, db),
 	}
 }

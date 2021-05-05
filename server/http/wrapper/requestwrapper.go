@@ -132,6 +132,7 @@ func writeErr(writter http.ResponseWriter, logger logrus.FieldLogger, handlerErr
 	handlerEr := handlerErrVal.Elem().Interface().(HandlerError)
 
 	logger.WithError(handlerEr.Err).Error("Handler returned error")
+	writter.Write([]byte(handlerEr.Err.Error()))
 	writter.WriteHeader(handlerEr.StatusCode)
 }
 

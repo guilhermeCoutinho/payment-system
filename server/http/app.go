@@ -47,6 +47,7 @@ func (a *App) buildRoutes(dal *dal.DAL) {
 	router := mux.NewRouter()
 	accountController := account.NewAccount(dal, a.config)
 
+	a.wrapper.Register(router, "/accounts", accountController)
 	a.wrapper.Register(router, "/accounts/{ID}", accountController)
 
 	a.router = router
