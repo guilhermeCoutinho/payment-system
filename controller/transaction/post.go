@@ -12,10 +12,10 @@ import (
 )
 
 type CreateTransactionRequest struct {
-	AccountID     *uuid.UUID `json:"account_id"`
-	OperationType *int       `json:"operation_type"`
-	Amount        *int64     `json:"amount"`
-	// DateInSecondsUTC *int64
+	AccountID        *uuid.UUID `json:"account_id" validate:"required"`
+	OperationType    *int       `json:"operation_type" validate:"required"`
+	Amount           *int64     `json:"amount" validate:"required"`
+	DateInSecondsUTC *int64     `json:"date"`
 }
 
 type CreateTransactionResponse struct {
@@ -44,12 +44,17 @@ func (t *Transaction) Post(ctx context.Context, args *CreateTransactionRequest, 
 }
 
 func (t *Transaction) ToModel(args *CreateTransactionRequest) *models.Transaction {
+	date := time.Now().UTC()
+	if args.DateInSecondsUTC != nil {
+		date = time.Unix(*args.DateInSecondsUTC, 0)
+	}
+
 	return &models.Transaction{
 		ID:            uuid.New(),
 		AccountID:     *args.AccountID,
 		OperationType: models.OperationType(*args.OperationType),
 		Amount:        *args.Amount,
-		Date:          time.Now().UTC(),
+		Date:          date,
 
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),

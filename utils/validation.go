@@ -15,8 +15,14 @@ func ValdiateFields(v interface{}) error {
 
 	for i := 0; i < structMeta.NumField(); i++ {
 		field := structMeta.Field(i)
+		fieldMeta := structMeta.Type().Field(i)
+
+		if validationCmd := fieldMeta.Tag.Get("validate"); validationCmd != "required" {
+			continue
+		}
+
 		if field.Kind() == reflect.Ptr && field.IsNil() {
-			return fmt.Errorf(errFormatString, structMeta.Type().Field(i).Name)
+			return fmt.Errorf(errFormatString, fieldMeta.Name)
 		}
 	}
 	return nil
