@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-var ErrMissingRequestParam error = fmt.Errorf("required field is empty")
+var errFormatString = "required field %s is empty"
 
 func ValdiateFields(v interface{}) error {
 	structMeta := reflect.ValueOf(v)
@@ -16,7 +16,7 @@ func ValdiateFields(v interface{}) error {
 	for i := 0; i < structMeta.NumField(); i++ {
 		field := structMeta.Field(i)
 		if field.Kind() == reflect.Ptr && field.IsNil() {
-			return ErrMissingRequestParam
+			return fmt.Errorf(errFormatString, structMeta.Type().Field(i).Name)
 		}
 	}
 	return nil
