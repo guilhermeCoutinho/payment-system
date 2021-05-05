@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/guilhermeCoutinho/payment-system/controller/account"
+	"github.com/guilhermeCoutinho/payment-system/controller/transaction"
 	"github.com/guilhermeCoutinho/payment-system/dal"
 	"github.com/guilhermeCoutinho/payment-system/server/http/wrapper"
 	"github.com/sirupsen/logrus"
@@ -46,9 +47,13 @@ func (a *App) buildRoutes(dal *dal.DAL) {
 
 	router := mux.NewRouter()
 	accountController := account.NewAccount(dal, a.config)
+	transactionController := transaction.NewTransaction(dal, a.config)
 
 	a.wrapper.Register(router, "/accounts", accountController)
 	a.wrapper.Register(router, "/accounts/{ID}", accountController)
+
+	a.wrapper.Register(router, "/acccounts{ID}/transactions", transactionController)
+	a.wrapper.Register(router, "/transactions", transactionController)
 
 	a.router = router
 }
