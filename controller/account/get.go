@@ -6,17 +6,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/guilhermeCoutinho/payment-system/server/http/wrapper"
+	"github.com/guilhermeCoutinho/payment-system/utils"
 )
 
 type GetAccountParams struct {
-	ID *uuid.UUID `json:"id, a"`
+	ID *uuid.UUID `json:"id"`
 }
 
 func (c *GetAccountParams) Validate() error {
-	if c.ID == nil {
-		return ErrMissingRequestParam
-	}
-	return nil
+	return utils.ValdiateFields(c)
 }
 
 func (a *Account) Get(ctx context.Context, args *struct{}, vars *GetAccountParams) (*CreateAccountResponse, *wrapper.HandlerError) {

@@ -2,16 +2,14 @@ package account
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/guilhermeCoutinho/payment-system/models"
 	"github.com/guilhermeCoutinho/payment-system/server/http/wrapper"
+	"github.com/guilhermeCoutinho/payment-system/utils"
 )
-
-var ErrMissingRequestParam error = fmt.Errorf("request parameter cant be null")
 
 type CreateAccountRequest struct {
 	DocumentNumber *string `json:"document_number"`
@@ -22,10 +20,7 @@ type CreateAccountResponse struct {
 }
 
 func (c *CreateAccountRequest) Validate() error {
-	if c.DocumentNumber == nil {
-		return ErrMissingRequestParam
-	}
-	return nil
+	return utils.ValdiateFields(c)
 }
 
 func (a *Account) Post(ctx context.Context, args *CreateAccountRequest, vars *struct{}) (*CreateAccountResponse, *wrapper.HandlerError) {
