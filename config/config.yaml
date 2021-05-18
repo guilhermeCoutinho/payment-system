@@ -14,3 +14,7 @@ db:
   poolSize: 20
   maxRetries: 3
   connectionTimeout: 1
+
+account:
+  credit:
+    limit: 100

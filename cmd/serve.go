@@ -42,12 +42,12 @@ func init() {
 func startHTTPServer() {
 	logger := getLogger(config)
 
-	db, err := connectToPG("db")
+	db, err := connectToPG("db") // postgress
 	if err != nil {
 		logger.Fatalln(err.Error())
 	}
 
-	dal := dal.NewDAL(config, db)
+	dal := dal.NewDAL(config, db) // DAL layer
 
 	app, err := http.NewApp(config, logger, dal)
 	if err != nil {

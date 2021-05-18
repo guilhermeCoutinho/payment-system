@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,7 +17,7 @@ type CreateAccountRequest struct {
 }
 
 type CreateAccountResponse struct {
-	Account *models.Account `json:"account"`
+	Account *models.AccountPublicInfo `json:"account"`
 }
 
 func (c *CreateAccountRequest) Validate() error {
@@ -30,13 +31,18 @@ func (a *Account) Post(ctx context.Context, args *CreateAccountRequest, vars *st
 	}
 
 	newAccount := a.ToModel(args)
+	a.enrichCreditLimit(newAccount)
+
 	err = a.dal.Account.Insert(ctx, newAccount)
 	if err != nil {
 		return nil, &wrapper.HandlerError{Err: err, StatusCode: http.StatusInternalServerError}
 	}
 
 	return &CreateAccountResponse{
-		Account: newAccount,
+		Account: &models.AccountPublicInfo{
+			Account:     newAccount,
+			CreditLimit: fmt.Sprintf("%.2f", float64(newAccount.CreditLimit)/100.0),
+		},
 	}, nil
 }
 
@@ -47,4 +53,9 @@ func (a *Account) ToModel(args *CreateAccountRequest) *models.Account {
 		CreatedAt:      time.Now().UTC(),
 		UpdatedAt:      time.Now().UTC(),
 	}
+}
+
+func (a *Account) enrichCreditLimit(account *models.Account) {
+	defaultLimit := a.config.GetInt("account.credit.limit")
+	account.CreditLimit = defaultLimit * 100
 }

@@ -3,6 +3,7 @@ module github.com/guilhermeCoutinho/payment-system
 go 1.15
 
 require (
+	github.com/go-pg/pg v8.0.7+incompatible
 	github.com/go-pg/pg/v10 v10.9.1
 	github.com/google/uuid v1.2.0
 	github.com/gorilla/mux v1.8.0

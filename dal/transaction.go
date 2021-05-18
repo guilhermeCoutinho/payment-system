@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-pg/pg/v10"
 	"github.com/google/uuid"
 	"github.com/guilhermeCoutinho/payment-system/models"
 	"github.com/spf13/viper"
@@ -20,12 +19,12 @@ type TransactionDAL interface {
 
 type Transaction struct {
 	config *viper.Viper
-	db     *pg.DB
+	db     DB
 }
 
 func NewTransaction(
 	config *viper.Viper,
-	db *pg.DB,
+	db DB,
 ) *Transaction {
 	return &Transaction{
 		config: config,
@@ -34,24 +33,27 @@ func NewTransaction(
 }
 
 func (t *Transaction) Insert(ctx context.Context, transaction *models.Transaction) error {
+	db := t.db.WithContext(ctx)
 	transaction.CreatedAt = time.Now()
 	transaction.UpdatedAt = time.Now()
-	_, err := t.db.Model(transaction).Insert()
+	_, err := db.Model(transaction).Insert()
 	return err
 }
 
 func (t *Transaction) Upsert(ctx context.Context, transaction *models.Transaction) error {
+	db := t.db.WithContext(ctx)
 	transaction.UpdatedAt = time.Now()
-	_, err := t.db.Model(transaction).OnConflict("(id) DO UPDATE").Insert()
+	_, err := db.Model(transaction).OnConflict("(id) DO UPDATE").Insert()
 	return err
 }
 
 func (t *Transaction) Delete(ctx context.Context, id uuid.UUID) error {
+	db := t.db.WithContext(ctx)
 	Transaction := models.Transaction{
 		ID: id,
 	}
 
-	result, err := t.db.Model(&Transaction).Where("id = ?", id).Delete()
+	result, err := db.Model(&Transaction).Where("id = ?", id).Delete()
 	if result.RowsAffected() == 0 {
 		return fmt.Errorf("no rows")
 	}
@@ -59,9 +61,10 @@ func (t *Transaction) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (t *Transaction) Get(ctx context.Context, id uuid.UUID) (*models.Transaction, error) {
+	db := t.db.WithContext(ctx)
 	transaction := &models.Transaction{}
 
-	err := t.db.Model(transaction).Where("id = ?", id).Select()
+	err := db.Model(transaction).Where("id = ?", id).Select()
 	if err != nil {
 		return nil, err
 	}

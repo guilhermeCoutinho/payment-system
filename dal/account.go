@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-pg/pg/v10"
 	"github.com/google/uuid"
 	"github.com/guilhermeCoutinho/payment-system/models"
 	"github.com/spf13/viper"
@@ -20,12 +19,12 @@ type AccountDAL interface {
 
 type Account struct {
 	config *viper.Viper
-	db     *pg.DB
+	db     DB
 }
 
 func NewAccount(
 	config *viper.Viper,
-	db *pg.DB,
+	db DB,
 ) *Account {
 	return &Account{
 		config: config,
@@ -34,24 +33,27 @@ func NewAccount(
 }
 
 func (a *Account) Insert(ctx context.Context, account *models.Account) error {
+	db := a.db.WithContext(ctx)
 	account.CreatedAt = time.Now()
 	account.UpdatedAt = time.Now()
-	_, err := a.db.Model(account).Insert()
+	_, err := db.Model(account).Insert()
 	return err
 }
 
 func (u *Account) Upsert(ctx context.Context, account *models.Account) error {
+	db := u.db.WithContext(ctx)
 	account.UpdatedAt = time.Now()
-	_, err := u.db.Model(account).OnConflict("(id) DO UPDATE").Insert()
+	_, err := db.Model(account).OnConflict("(id) DO UPDATE").Insert()
 	return err
 }
 
 func (u *Account) Delete(ctx context.Context, id uuid.UUID) error {
+	db := u.db.WithContext(ctx)
 	Account := models.Account{
 		ID: id,
 	}
 
-	result, err := u.db.Model(&Account).Where("id = ?", id).Delete()
+	result, err := db.Model(&Account).Where("id = ?", id).Delete()
 	if result.RowsAffected() == 0 {
 		return fmt.Errorf("no rows")
 	}
@@ -59,9 +61,10 @@ func (u *Account) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (u *Account) Get(ctx context.Context, id uuid.UUID) (*models.Account, error) {
+	db := u.db.WithContext(ctx)
 	acc := &models.Account{}
 
-	err := u.db.Model(acc).Where("id = ?", id).Select()
+	err := db.Model(acc).Where("id = ?", id).Select()
 	if err != nil {
 		return nil, err
 	}

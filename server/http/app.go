@@ -52,7 +52,7 @@ func (a *App) buildRoutes(dal *dal.DAL) {
 	a.wrapper.Register(router, "/accounts", accountController)
 	a.wrapper.Register(router, "/accounts/{ID}", accountController)
 
-	a.wrapper.Register(router, "/acccounts{ID}/transactions", transactionController)
+	a.wrapper.Register(router, "/acccounts/{ID}/transactions", transactionController)
 	a.wrapper.Register(router, "/transactions", transactionController)
 
 	a.router = router

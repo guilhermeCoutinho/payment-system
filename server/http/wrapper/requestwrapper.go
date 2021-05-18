@@ -67,7 +67,7 @@ func (w *HTTPWrapper) wrapHTTPRequest(handler reflect.Value, method reflect.Meth
 		payload, varsValue, err := unmarshallArgsAndVars(method, r)
 		if err != nil {
 			logger.WithError(err).Error("Failed to unmarshall request")
-			writter.WriteHeader(http.StatusInternalServerError)
+			writter.WriteHeader(http.StatusBadRequest)
 			return
 		}
 

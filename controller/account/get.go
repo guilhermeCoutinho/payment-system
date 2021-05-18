@@ -2,9 +2,11 @@ package account
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/guilhermeCoutinho/payment-system/models"
 	"github.com/guilhermeCoutinho/payment-system/server/http/wrapper"
 	"github.com/guilhermeCoutinho/payment-system/utils"
 )
@@ -29,6 +31,9 @@ func (a *Account) Get(ctx context.Context, args *struct{}, vars *GetAccountParam
 	}
 
 	return &CreateAccountResponse{
-		Account: account,
+		Account: &models.AccountPublicInfo{
+			Account:     account,
+			CreditLimit: fmt.Sprintf("%.2f", float64(account.CreditLimit)/100.0),
+		},
 	}, nil
 }
